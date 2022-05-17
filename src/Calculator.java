@@ -19,6 +19,7 @@ public class Calculator {
                 System.out.println(calc(input));
             } catch (IOException e) {
                 System.out.println(e.getMessage());
+                System.exit(1);
             }
         }
     }
