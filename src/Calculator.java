@@ -27,37 +27,29 @@ public class Calculator {
         int firstNumber;
         int secondNumber;
         String operand;
-        Map<String,String> numbers = new HashMap<>();
-        numbers.put("I", "1");
-        numbers.put("II", "2");
-        numbers.put("III", "3");
-        numbers.put("IV", "4");
-        numbers.put("V", "5");
-        numbers.put("VI", "6");
-        numbers.put("VII", "7");
-        numbers.put("VIII", "8");
-        numbers.put("IX", "9");
-        numbers.put("X", "10");
+        enum romanNumber {
+            I, II, III, IV, V, VI, VII, VIII, IX, X
+        }
         String[] expression = input.split(" ");
         if (expression.length != 3) {
             throw new IOException("Неверный формат ввода данных. Должно быть два числа и операнд, все разделенные пробелами.");
         }
+        operand = expression[1];
         String regexArabic = "^[\\d, 10] [+\\-*/] [\\d, 10]$";
         Pattern patternArabic = Pattern.compile(regexArabic);
         Matcher matcherArabic = patternArabic.matcher(input);
-        String regexRoman = "^(X|IX|IV|V?I{0,3}) [+\\-*/] (X|IX|IV|V?I{0,3})$";
-        Pattern patternRoman = Pattern.compile(regexRoman);
-        Matcher matcherRoman = patternRoman.matcher(input);
-        operand = expression[1];
-        if (matcherRoman.matches()) {
-            firstNumber = Integer.parseInt(numbers.get(expression[0]));
-            secondNumber = Integer.parseInt(numbers.get(expression[2]));
-            return arabic_to_roman(do_calculation(firstNumber, secondNumber, operand));
-        }
         if (matcherArabic.matches()) {
             firstNumber = Integer.parseInt(expression[0]);
             secondNumber = Integer.parseInt(expression[2]);
             return String.valueOf(do_calculation (firstNumber, secondNumber, operand));
+        }
+        String regexRoman = "^(X|IX|IV|V?I{0,3}) [+\\-*/] (X|IX|IV|V?I{0,3})$";
+        Pattern patternRoman = Pattern.compile(regexRoman);
+        Matcher matcherRoman = patternRoman.matcher(input);
+        if (matcherRoman.matches()) {
+            firstNumber = romanNumber.valueOf(expression[0]).ordinal() + 1;
+            secondNumber = romanNumber.valueOf(expression[2]).ordinal() + 1;
+            return arabic_to_roman(do_calculation(firstNumber, secondNumber, operand));
         }
         throw new IOException("Некорректный ввод. Пример: '4 * 7' или 'IV / II'.");
     }
